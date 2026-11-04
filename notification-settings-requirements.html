@@ -1,0 +1,1388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notification Settings — Product Requirements</title>
+<style>
+  :root{
+    --bg:#f4f6fa;
+    --surface:#ffffff;
+    --surface-2:#f8fafc;
+    --ink:#0f172a;
+    --ink-2:#334155;
+    --ink-3:#64748b;
+    --line:#e2e8f0;
+    --line-2:#cbd5e1;
+    --accent:#1e3a8a;
+    --accent-soft:#eef2ff;
+    --ok:#047857;
+    --ok-soft:#ecfdf5;
+    --warn:#b45309;
+    --warn-soft:#fffbeb;
+    --code-bg:#eef2f7;
+    --radius:12px;
+    --maxw:860px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    background:var(--surface);
+    border-bottom:1px solid var(--line);
+    padding:48px 24px 36px;
+  }
+  .masthead-inner{max-width:1180px;margin:0 auto}
+  .eyebrow{
+    font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:600;margin:0 0 10px;
+  }
+  .masthead h1{
+    margin:0 0 12px;font-size:clamp(28px,4.5vw,42px);line-height:1.15;
+    letter-spacing:-.02em;font-weight:700;
+  }
+  .masthead p.lede{margin:0;color:var(--ink-2);font-size:17px;max-width:62ch}
+  .meta-row{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;
+  }
+  .pill{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--surface-2);border:1px solid var(--line);
+    border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink-2);
+  }
+  .pill strong{color:var(--ink);font-weight:600}
+
+  /* ---------- layout ---------- */
+  .shell{
+    max-width:1180px;margin:0 auto;padding:36px 24px 80px;
+    display:grid;grid-template-columns:232px minmax(0,1fr);gap:48px;align-items:start;
+  }
+  nav.toc{
+    position:sticky;top:24px;
+    font-size:13.5px;line-height:1.45;
+    max-height:calc(100vh - 48px);overflow-y:auto;
+  }
+  nav.toc .toc-title{
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:600;margin:0 0 12px;
+  }
+  nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:toc}
+  nav.toc li{counter-increment:toc;margin:0}
+  nav.toc a{
+    display:block;padding:5px 10px 5px 30px;position:relative;
+    color:var(--ink-2);text-decoration:none;border-radius:6px;
+  }
+  nav.toc a::before{
+    content:counter(toc);position:absolute;left:8px;top:5px;
+    color:var(--ink-3);font-variant-numeric:tabular-nums;font-size:12px;
+  }
+  nav.toc a:hover{background:var(--accent-soft);color:var(--accent)}
+
+  main{min-width:0}
+
+  /* ---------- sections ---------- */
+  section{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--radius);padding:28px 32px;margin:0 0 20px;
+    scroll-margin-top:24px;
+  }
+  section > h2{
+    margin:0 0 16px;font-size:22px;letter-spacing:-.01em;font-weight:700;
+    padding-bottom:12px;border-bottom:1px solid var(--line);
+  }
+  section > h2 .num{color:var(--ink-3);font-weight:600;margin-right:10px;font-variant-numeric:tabular-nums}
+  h3{margin:28px 0 10px;font-size:16.5px;font-weight:650;letter-spacing:-.005em}
+  h3:first-of-type{margin-top:18px}
+  h4{margin:20px 0 8px;font-size:14.5px;font-weight:650;color:var(--ink-2)}
+  p{margin:0 0 14px;color:var(--ink-2)}
+  ul,ol{margin:0 0 14px;padding-left:22px;color:var(--ink-2)}
+  li{margin:0 0 6px}
+  li > ul,li > ol{margin-top:6px}
+  strong{color:var(--ink);font-weight:650}
+  a{color:var(--accent)}
+  code{
+    background:var(--code-bg);border-radius:5px;padding:1.5px 6px;
+    font:500 13px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    color:#1e293b;white-space:nowrap;
+  }
+
+  /* ---------- tables ---------- */
+  .table-wrap{
+    overflow-x:auto;margin:0 0 18px;border:1px solid var(--line);
+    border-radius:10px;-webkit-overflow-scrolling:touch;
+  }
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+  thead th{
+    background:var(--surface-2);text-align:left;font-weight:650;color:var(--ink);
+    padding:11px 14px;border-bottom:1px solid var(--line-2);white-space:nowrap;
+    font-size:12.5px;letter-spacing:.02em;text-transform:uppercase;
+  }
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--line);color:var(--ink-2);vertical-align:top}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover td{background:var(--surface-2)}
+  td code{white-space:nowrap}
+
+  /* ---------- callouts ---------- */
+  .note{
+    border-radius:10px;padding:14px 16px;margin:0 0 18px;font-size:14.5px;
+    border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);
+  }
+  .note p:last-child,.note ul:last-child,.note ol:last-child{margin-bottom:0}
+  .note .label{
+    display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    font-weight:650;margin-bottom:6px;
+  }
+  .note.open{background:var(--warn-soft);border-color:#fde68a}
+  .note.open .label{color:var(--warn)}
+  .note.rule{background:var(--accent-soft);border-color:#c7d2fe}
+  .note.rule .label{color:var(--accent)}
+  .note.gap{background:#fef2f2;border-color:#fecaca}
+  .note.gap .label{color:#b91c1c}
+
+  /* ---------- figures ---------- */
+  figure{
+    margin:0 0 22px;border:1px solid var(--line-2);border-radius:10px;
+    overflow:hidden;background:var(--surface-2);
+  }
+  figure img{display:block;width:100%;height:auto}
+  figcaption{
+    padding:11px 16px;font-size:13.5px;color:var(--ink-3);
+    border-top:1px solid var(--line);background:var(--surface);
+  }
+  figcaption b{color:var(--ink-2);font-weight:650}
+
+  /* ---------- misc ---------- */
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14.5px;margin:0 0 16px}
+  .kv dt{color:var(--ink-3);font-weight:600;white-space:nowrap}
+  .kv dd{margin:0;color:var(--ink-2)}
+  .checklist{list-style:none;padding-left:0}
+  .checklist li{position:relative;padding-left:26px}
+  .checklist li::before{
+    content:"";position:absolute;left:4px;top:.62em;width:9px;height:9px;
+    border-radius:2px;border:1.5px solid var(--ok);background:var(--ok-soft);
+  }
+  footer.doc-foot{
+    max-width:1180px;margin:0 auto;padding:0 24px 56px;
+    color:var(--ink-3);font-size:13.5px;
+  }
+  footer.doc-foot hr{border:0;border-top:1px solid var(--line);margin:0 0 18px}
+
+  @media (max-width:980px){
+    .shell{grid-template-columns:1fr;gap:28px;padding:24px 16px 64px}
+    nav.toc{position:static;max-height:none;background:var(--surface);
+      border:1px solid var(--line);border-radius:var(--radius);padding:18px 16px}
+    .masthead{padding:32px 16px 26px}
+    section{padding:22px 18px}
+  }
+
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0b1120;--surface:#111827;--surface-2:#162033;--ink:#f1f5f9;
+      --ink-2:#cbd5e1;--ink-3:#94a3b8;--line:#1f2b3e;--line-2:#2d3b52;
+      --accent:#93b4fd;--accent-soft:#17243c;--ok:#34d399;--ok-soft:#10241d;
+      --warn:#fbbf24;--warn-soft:#241c0c;--code-bg:#1b2437;
+    }
+    :root:not([data-theme="light"]) code{color:#dbeafe}
+    :root:not([data-theme="light"]) .note.open{border-color:#4a3a12}
+    :root:not([data-theme="light"]) .note.rule{border-color:#294070}
+    :root:not([data-theme="light"]) .note.gap{background:#2a1416;border-color:#5b2225}
+    :root:not([data-theme="light"]) .note.gap .label{color:#fca5a5}
+  }
+  @media print{
+    body{background:#fff}
+    .shell{display:block;padding:0}
+    nav.toc{display:none}
+    section{break-inside:avoid;border:0;padding:0 0 18px;margin:0 0 18px;border-bottom:1px solid #ddd}
+    figure{break-inside:avoid}
+  }
+  /* ---------- UI mockups (fixed light palette: these stand in for screenshots) ---------- */
+  .mock{
+    --m-bg:#f1f5f9; --m-card:#ffffff; --m-line:#e2e8f0; --m-line2:#cbd5e1;
+    --m-ink:#0f172a; --m-ink2:#475569; --m-ink3:#94a3b8;
+    --m-accent:#1d4ed8; --m-navy:#1e293b; --m-soft:#eff4ff;
+    margin:0 0 22px; border:1px solid var(--m-line2); border-radius:10px;
+    overflow:hidden; background:var(--m-bg); color-scheme:light;
+  }
+  .mock-vp{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .mock-page{
+    min-width:720px; background:var(--m-bg); padding:20px 22px 24px;
+    color:var(--m-ink); font-size:12.5px; line-height:1.45; position:relative;
+  }
+  .mock-page *{box-sizing:border-box}
+  .mock figcaption{border-top:1px solid var(--m-line2)}
+
+  /* primitives */
+  .m-mini{color:var(--m-ink2);font-size:11.5px;line-height:1.4}
+  .m-faint{color:var(--m-ink3);font-size:11.5px}
+  .m-strong{font-weight:650;color:var(--m-ink);font-size:12.5px}
+  .m-grow{min-width:0}
+  .m-card{
+    background:var(--m-card);border:1px solid var(--m-line);border-radius:8px;
+  }
+  .m-btn{
+    display:inline-block;background:var(--m-navy);color:#fff;border-radius:6px;
+    padding:6px 12px;font-size:11.5px;font-weight:650;white-space:nowrap;
+  }
+  .m-btn-ghost{
+    display:inline-block;background:var(--m-card);border:1px solid var(--m-line2);
+    border-radius:6px;padding:5px 11px;font-size:11.5px;color:var(--m-ink2);white-space:nowrap;
+  }
+  .m-toggle{
+    display:inline-block;width:32px;height:18px;border-radius:999px;
+    background:#cbd5e1;position:relative;flex:0 0 auto;
+  }
+  .m-toggle::after{
+    content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;
+    border-radius:50%;background:#fff;
+  }
+  .m-toggle.on{background:var(--m-accent)}
+  .m-toggle.on::after{left:auto;right:2px}
+  .m-tile{
+    flex:0 0 auto;width:28px;height:28px;border-radius:7px;background:var(--m-soft);
+    border:1px solid #dbe4fb;color:var(--m-accent);font-weight:700;font-size:12px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .m-chev{color:var(--m-ink3);font-size:11px;justify-self:end}
+
+  /* page header */
+  .m-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;
+    background:var(--m-card);margin:-20px -22px 18px;padding:18px 22px;border-bottom:1px solid var(--m-line)}
+  .m-h1{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:3px}
+  .m-user{display:flex;gap:9px;align-items:center;text-align:right}
+  .m-user .m-avatar{
+    order:2;width:30px;height:30px;border-radius:50%;background:#dbe4fb;color:var(--m-accent);
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  }
+  .m-user > div{order:1}
+
+  /* rows */
+  .m-between{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 14px}
+  .m-seg{display:inline-flex;border:1px solid var(--m-line2);border-radius:6px;overflow:hidden;font-size:11.5px}
+  .m-seg span{padding:5px 12px;background:var(--m-card);color:var(--m-ink2)}
+  .m-seg span.on{background:var(--m-navy);color:#fff;font-weight:650}
+
+  .m-summary{display:flex;justify-content:space-between;align-items:center;gap:16px;
+    padding:14px 2px;border-bottom:1px solid var(--m-line2);flex-wrap:wrap}
+  .m-summary .m-right{display:flex;align-items:center;gap:10px}
+
+  .m-list{background:var(--m-card);border:1px solid var(--m-line);border-radius:8px;overflow:hidden}
+  .m-lrow{display:flex;align-items:center;gap:11px;padding:10px 13px;border-bottom:1px solid var(--m-line)}
+  .m-lrow:last-child{border-bottom:0}
+
+  .m-save{display:flex;justify-content:flex-end;align-items:center;gap:12px;padding:10px 0 0}
+
+  /* sections */
+  .m-sec{border-top:1px solid var(--m-line2);padding:12px 0 16px;position:relative}
+  .m-sec:first-of-type{border-top:0}
+  .m-status{display:flex;justify-content:flex-end;align-items:center;gap:6px;
+    font-size:11.5px;color:var(--m-ink2);margin-bottom:8px}
+  .m-dot{width:6px;height:6px;border-radius:50%;background:#10b981;display:inline-block}
+  .m-dot.amber{background:#f59e0b}
+  .m-grid{display:grid;grid-template-columns:200px minmax(0,1fr);gap:26px;align-items:start}
+  .m-sec-title{display:flex;align-items:center;gap:7px;font-weight:650;font-size:13px;margin-bottom:5px}
+  .m-ico{color:var(--m-ink2);font-size:12px}
+
+  /* event table */
+  .m-cols{display:grid;grid-template-columns:minmax(0,1fr) repeat(4,38px) 86px 18px;
+    align-items:center;gap:0;column-gap:4px}
+  .m-colhead{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--m-ink3);
+    padding:0 13px 6px}
+  .m-colhead i{font-style:normal;text-align:center}
+  .m-colhead span.t{text-align:left;padding-left:2px}
+  .m-erow{padding:11px 13px;border-bottom:1px solid var(--m-line)}
+  .m-erow:last-child{border-bottom:0}
+  .m-ch{text-align:center;color:var(--m-ink3);font-size:12px;font-weight:700}
+  .m-ch.on{color:var(--m-accent)}
+  .m-timing{color:var(--m-ink2);font-size:12px;padding-left:2px}
+
+  /* expanded detail */
+  .m-ehead{display:grid;grid-template-columns:minmax(0,1fr) repeat(4,38px) 86px 18px;
+    column-gap:4px;align-items:center;padding:11px 13px;border-bottom:1px solid var(--m-line)}
+  .m-drow{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;
+    padding:12px 13px;border-bottom:1px solid var(--m-line);align-items:start}
+  .m-dlabel{color:var(--m-ink2);font-size:12px;padding-top:4px}
+  .m-chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--m-line2);
+    border-radius:6px;padding:4px 10px;font-size:11.5px;color:var(--m-ink3);background:var(--m-card);margin:0 6px 6px 0}
+  .m-chip.on{border-color:#bfd0fb;background:var(--m-soft);color:var(--m-accent);font-weight:650}
+  .m-pill{display:inline-flex;align-items:center;gap:6px;background:var(--m-soft);
+    border:1px solid #dbe4fb;border-radius:999px;padding:3px 9px;font-size:11.5px;
+    color:var(--m-ink);margin:0 6px 6px 0}
+  .m-pill x{font-style:normal;color:var(--m-ink3);font-size:11px}
+  .m-box{border:1px solid var(--m-line);border-radius:8px;background:#fbfdff;padding:12px}
+  .m-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .m-flabel{font-size:11px;color:var(--m-ink2);font-weight:600;margin-bottom:4px}
+  .m-input,.m-select{
+    display:flex;align-items:center;gap:6px;border:1px solid var(--m-line2);
+    border-radius:6px;background:var(--m-card);padding:6px 9px;font-size:12px;color:var(--m-ink);
+  }
+  .m-input b{font-weight:650}
+  .m-input .u{margin-left:auto;color:var(--m-ink3);font-size:11px}
+  .m-select::after{content:"⌄";margin-left:auto;color:var(--m-ink3);font-size:11px;line-height:1}
+  .m-picker{display:flex;gap:8px;align-items:center;margin-top:2px}
+  .m-picker .m-select{flex:1}
+  .m-btn-dim{display:inline-block;background:#94a3b8;color:#fff;border-radius:6px;
+    padding:6px 11px;font-size:11.5px;font-weight:650;white-space:nowrap}
+  .m-cond-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .m-link{color:var(--m-accent);font-size:11.5px;font-weight:600}
+  .m-addmore{display:block;padding:10px 13px;color:var(--m-accent);font-size:12px;font-weight:650}
+
+  /* popover */
+  .m-pop{
+    position:absolute;right:0;top:26px;width:232px;background:var(--m-card);
+    border:1px solid var(--m-line2);border-radius:8px;
+    box-shadow:0 10px 26px rgba(15,23,42,.14);padding:4px 0;z-index:2;
+  }
+  .m-pop .hd{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--m-ink3);
+    padding:8px 13px 6px;border-bottom:1px solid var(--m-line)}
+  .m-pop .it{padding:9px 13px}
+  .m-pop .it .m-strong{display:block}
+
+  /* coming soon */
+  .m-soon{display:flex;gap:11px;align-items:flex-start;padding:14px}
+
+  @media (max-width:980px){
+    .mock-page{padding:16px}
+    .m-head{margin:-16px -16px 14px;padding:16px}
+  }
+
+  @media print{
+    .mock-vp{overflow:visible}
+    .mock-page{min-width:0;font-size:9px}
+    .m-cols,.m-ehead{grid-template-columns:minmax(0,1fr) repeat(4,30px) 62px 14px}
+    .m-grid{grid-template-columns:140px minmax(0,1fr);gap:14px}
+    .m-pop{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow">Quper · Product Requirements</p>
+    <h1>Notification Settings</h1>
+    <p class="lede">Functional requirements, defaults, and business rules represented by the current <code>notification-settings-vite</code> prototype — plus the prototype behaviour that must be completed or clarified before production implementation.</p>
+    <div class="meta-row">
+      <span class="pill"><strong>11</strong> active event types</span>
+      <span class="pill"><strong>7</strong> configurable groups</span>
+      <span class="pill"><strong>2</strong> actors — Admin · Normal user</span>
+      <span class="pill"><strong>14</strong> open decisions</span>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+
+<nav class="toc" aria-label="Table of contents">
+  <p class="toc-title">Contents</p>
+  <ol>
+    <li><a href="#s1">Document purpose</a></li>
+    <li><a href="#s2">Product objective</a></li>
+    <li><a href="#s3">Actors and scope</a></li>
+    <li><a href="#s4">Notification catalogue</a></li>
+    <li><a href="#s5">Core event-state rules</a></li>
+    <li><a href="#s6">Delivery-channel rules</a></li>
+    <li><a href="#s7">Group-level bulk actions</a></li>
+    <li><a href="#s8">Event-specific rules</a></li>
+    <li><a href="#s9">Recipient rules</a></li>
+    <li><a href="#s10">Schedule rules</a></li>
+    <li><a href="#s11">Summary and status</a></li>
+    <li><a href="#s12">Save behavior</a></li>
+    <li><a href="#s13">Reset behavior</a></li>
+    <li><a href="#s14">Locked notifications</a></li>
+    <li><a href="#s15">Validation and errors</a></li>
+    <li><a href="#s16">Persistence model</a></li>
+    <li><a href="#s17">Accessibility &amp; responsive</a></li>
+    <li><a href="#s18">Production gaps</a></li>
+    <li><a href="#s19">Acceptance criteria</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section id="s1">
+  <h2><span class="num">1</span>Document purpose</h2>
+  <p>This document describes the functional requirements, conditions, defaults, and business rules represented by the current <code>notification-settings-vite</code> prototype. It also identifies prototype behavior that must be completed or clarified before production implementation.</p>
+
+  <figure class="mock" role="img" aria-label="Notification Settings page header showing the Admin / Normal user toggle, the summary line reading 'You're getting 11 of 11 notifications', the Delivery channels card with In-app always on, Email and  enabled and Microsoft  not connected, and the Cost signals section with its bulk menu open on 'Mute section'.">
+    <div class="mock-vp"><div class="mock-page">
+
+      <div class="m-head">
+        <div>
+          <div class="m-h1">Notifications</div>
+          <div class="m-mini">Choose what Quper tells you, where it arrives, and when it can interrupt.</div>
+        </div>
+        <div class="m-user">
+          <div>
+            <div class="m-strong">Priya Nair</div>
+            <div class="m-faint">Normal user · priya@xequalto.com</div>
+          </div>
+          <span class="m-avatar">PN</span>
+        </div>
+      </div>
+
+      <div class="m-card m-between">
+        <div>
+          <div class="m-strong">Settings for</div>
+          <div class="m-mini">Your personal notification preferences</div>
+        </div>
+        <div class="m-seg"><span>Admin</span><span class="on">Normal user</span></div>
+      </div>
+
+      <div class="m-summary">
+        <div class="m-mini">You're getting <b style="color:#0f172a">11 of 11</b> notifications. These changes apply only to you.</div>
+        <div class="m-right">
+          <span class="m-faint">Save changes in each section</span>
+          <span class="m-btn-ghost">↻ Reset to defaults</span>
+        </div>
+      </div>
+
+      <div class="m-sec">
+        <div class="m-grid">
+          <div>
+            <div class="m-sec-title"><span class="m-ico">↝</span>Delivery channels</div>
+            <div class="m-mini">Where Quper can reach you. Turning a channel off silences it for every event below.</div>
+          </div>
+          <div>
+            <div class="m-list">
+              <div class="m-lrow"><span class="m-tile">Q</span>
+                <div class="m-grow"><div class="m-strong">In-app</div><div class="m-mini">Notification center and toasts inside Quper</div></div>
+                <span class="m-faint">Always on</span></div>
+              <div class="m-lrow"><span class="m-tile">✉</span>
+                <div class="m-grow"><div class="m-strong">Email</div><div class="m-mini">priya@xequalto.com</div></div>
+                <span class="m-toggle on"></span></div>
+              <div class="m-lrow"><span class="m-tile">#</span>
+                <div class="m-grow"><div class="m-strong"></div><div class="m-mini">Direct messages from the Quper app · xequalto..com</div></div>
+                <span class="m-toggle on"></span></div>
+              <div class="m-lrow"><span class="m-tile" style="background:#f1f5f9;border-color:#e2e8f0;color:#94a3b8">T</span>
+                <div class="m-grow"><div class="m-strong" style="color:#94a3b8">Microsoft </div><div class="m-mini">Not connected to this workspace</div></div>
+                <span class="m-btn-ghost">↗ Connect</span></div>
+            </div>
+            <div class="m-save"><span class="m-faint">Review changes before saving</span><span class="m-btn">Save changes</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-sec">
+        <div class="m-status"><span class="m-dot"></span>All on<span class="m-chev">⌄</span></div>
+        <div class="m-pop">
+          <div class="hd">Cost signals</div>
+          <div class="it"><span class="m-strong">♧ Mute section</span><span class="m-mini">Stops notifications from this section</span></div>
+        </div>
+        <div class="m-grid">
+          <div>
+            <div class="m-sec-title"><span class="m-ico">↝</span>Cost signals</div>
+            <div class="m-mini">Anomalies, drift and savings opportunities across AWS, Azure and GCP.</div>
+          </div>
+          <div>
+            <div class="m-colhead m-cols"><span>Event</span><i>In-app</i><i>Email</i><i></i><i></i><span class="t">Timing</span><span></span></div>
+            <div class="m-list">
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">Signal detected</div><div class="m-mini">Spend on a service or account moves outside its expected range.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch on">#</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">Action created</div><div class="m-mini">An action item is created from a cost signal for your team to review.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch">–</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+            </div>
+            <div class="m-save"><span class="m-faint">Review changes before saving</span><span class="m-btn">Save changes</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div></div>
+    <figcaption><b>Figure 1 — Page shell (normal user).</b> Actor switch, summary count, global delivery channels, and the normal-user section bulk menu (“Mute section”).</figcaption>
+  </figure>
+</section>
+
+<section id="s2">
+  <h2><span class="num">2</span>Product objective</h2>
+  <p>The Notification Settings page allows a user to control:</p>
+  <ul>
+    <li>which Quper events generate notifications;</li>
+    <li>which delivery channels may be used;</li>
+    <li>when notifications are delivered;</li>
+    <li>event-specific thresholds and conditions;</li>
+    <li>who receives notifications, where the user's role permits recipient management;</li>
+    <li>quiet hours and temporary notification pauses.</li>
+  </ul>
+  <p>The page supports both workspace-admin defaults and an individual member's personal preferences.</p>
+</section>
+
+<section id="s3">
+  <h2><span class="num">3</span>Actors and scope</h2>
+
+  <h3>3.1 Workspace admin</h3>
+  <p>The workspace admin manages workspace-oriented notification defaults and can:</p>
+  <ul>
+    <li>configure all available notification sections;</li>
+    <li>mute a complete section;</li>
+    <li>change an entire section to daily digest delivery;</li>
+    <li>reset a section to its defaults;</li>
+    <li>view the current user as a recipient;</li>
+    <li>add and remove recipients from the workspace recipient directory;</li>
+    <li>create additional threshold or condition rules where supported.</li>
+  </ul>
+
+  <h3>3.2 Normal user</h3>
+  <p>A normal user manages only their personal notification preferences and can:</p>
+  <ul>
+    <li>configure their own enabled notification sections;</li>
+    <li>mute or unmute a complete section;</li>
+    <li>view themselves as the personal-delivery recipient;</li>
+    <li><strong>not</strong> add other recipients;</li>
+    <li><strong>not</strong> create additional threshold or condition rules.</li>
+  </ul>
+
+  <h3>3.3 Preference isolation</h3>
+  <ul>
+    <li>Admin and normal-user preferences must be maintained independently.</li>
+    <li>Switching between Admin and Normal user must show the selected actor's profile, delivery settings, event preferences, schedule, and pause state.</li>
+    <li>A change made in one mode must not alter the other mode's settings.</li>
+  </ul>
+</section>
+
+<section id="s4">
+  <h2><span class="num">4</span>Notification catalogue</h2>
+  <p>The product currently contains <strong>eleven active notification event types</strong> in <strong>seven configurable groups</strong>. An eighth group is a placeholder.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Group</th><th>Event ID</th><th>User-facing event</th><th>Trigger or purpose</th><th>Default channels</th><th>Default timing</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Cost signals</td><td><code>cost-signal</code></td><td>Signal detected</td><td>Spend on a service or account moves outside its expected range.</td><td>In-app, Email, </td><td>Instant</td></tr>
+        <tr><td>Cost signals</td><td><code>action-created</code></td><td>Action created</td><td>An action item is created from a cost signal for team review.</td><td>In-app, Email</td><td>Instant</td></tr>
+        <tr><td>Allocation impact</td><td><code>allocation-impact-detected</code></td><td>Allocation impact detected</td><td>An allocation change materially affects attributed spend.</td><td>In-app, Email</td><td>Instant</td></tr>
+        <tr><td>Cost impact</td><td><code>cost-impact-detected</code></td><td>Cost impact detected</td><td>A cost change reaches the configured confidence requirement.</td><td>In-app, Email</td><td>Instant</td></tr>
+        <tr><td>Rightsizing</td><td><code>rightsizing-recommendation</code></td><td>Rightsizing recommendation</td><td>A resource has a rightsizing recommendation ready for review.</td><td>In-app, Email</td><td>Instant</td></tr>
+        <tr><td>Rightsizing</td><td><code>rightsizing-action-created</code></td><td>Action created</td><td>An action item is created from a rightsizing recommendation.</td><td>In-app, Email</td><td>Instant</td></tr>
+        <tr><td>Budgets &amp; forecasts</td><td><code>budget-threshold</code></td><td>Budget threshold crossed</td><td>Actual spend crosses a configured percentage of a followed or owned budget.</td><td>In-app, Email, </td><td>Instant</td></tr>
+        <tr><td>Action items</td><td><code>action-item</code></td><td>Action item notifications</td><td>A new action item needs the user's attention.</td><td>In-app</td><td>Instant</td></tr>
+        <tr><td>People &amp; access</td><td><code>people-user-added</code></td><td>New user added</td><td>A new user is added to the workspace.</td><td>In-app, Email</td><td>Instant</td></tr>
+        <tr><td>People &amp; access</td><td><code>people-role-changed</code></td><td>User role changed</td><td>A user's workspace role or access level changes.</td><td>In-app, Email</td><td>Instant</td></tr>
+        <tr><td>People &amp; access</td><td><code>people-group-added</code></td><td>User added to a group</td><td>A user is added to a new workspace group.</td><td>In-app, Email</td><td>Instant</td></tr>
+        <tr><td>Data platforms</td><td>None</td><td>Coming soon</td><td>Warehouse, job, and query health after data-platform connections become available.</td><td>None</td><td>None</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="mock" role="img" aria-label="Collapsed event rows for the Cost signals, Allocation impact, Cost impact and Rightsizing groups, each showing the event name, description, channel glyphs for In-app, Email,  and , and a timing value of Instant.">
+    <div class="mock-vp"><div class="mock-page">
+
+      <div class="m-sec">
+        <div class="m-status"><span class="m-dot"></span>All on<span class="m-chev">⌄</span></div>
+        <div class="m-grid">
+          <div>
+            <div class="m-sec-title"><span class="m-ico">↝</span>Cost signals</div>
+            <div class="m-mini">Anomalies, drift and savings opportunities across AWS, Azure and GCP.</div>
+          </div>
+          <div>
+            <div class="m-colhead m-cols"><span>Event</span><i>In-app</i><i>Email</i><i></i><i></i><span class="t">Timing</span><span></span></div>
+            <div class="m-list">
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">Signal detected</div><div class="m-mini">Spend on a service or account moves outside its expected range.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch on">#</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">Action created</div><div class="m-mini">An action item is created from a cost signal for your team to review.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch">–</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+            </div>
+            <div class="m-save"><span class="m-faint">Review changes before saving</span><span class="m-btn">Save changes</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-sec">
+        <div class="m-status"><span class="m-dot"></span>All on<span class="m-chev">⌄</span></div>
+        <div class="m-grid">
+          <div>
+            <div class="m-sec-title"><span class="m-ico">▥</span>Allocation impact</div>
+            <div class="m-mini">Changes in cost allocation that materially affect a team, owner or business unit.</div>
+          </div>
+          <div>
+            <div class="m-list">
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">Allocation impact detected</div><div class="m-mini">An allocation change has a meaningful effect on attributed spend.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch">–</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+            </div>
+            <div class="m-save"><span class="m-faint">Review changes before saving</span><span class="m-btn">Save changes</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-sec">
+        <div class="m-status"><span class="m-dot"></span>All on<span class="m-chev">⌄</span></div>
+        <div class="m-grid">
+          <div>
+            <div class="m-sec-title"><span class="m-ico">◉</span>Cost impact</div>
+            <div class="m-mini">Changes that materially affect current or projected cloud costs.</div>
+          </div>
+          <div>
+            <div class="m-list">
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">Cost impact detected</div><div class="m-mini">A cost change reaches the confidence level you want to be notified about.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch">–</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+            </div>
+            <div class="m-save"><span class="m-faint">Review changes before saving</span><span class="m-btn">Save changes</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-sec">
+        <div class="m-status"><span class="m-dot"></span>All on<span class="m-chev">⌄</span></div>
+        <div class="m-grid">
+          <div>
+            <div class="m-sec-title"><span class="m-ico">↔</span>Rightsizing</div>
+            <div class="m-mini">Recommendations to resize cloud resources based on utilization and demand.</div>
+          </div>
+          <div>
+            <div class="m-list">
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">Rightsizing recommendation</div><div class="m-mini">A resource has a recommendation ready for review.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch">–</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">Action created</div><div class="m-mini">An action item is created from a rightsizing recommendation.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch">–</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+            </div>
+            <div class="m-save"><span class="m-faint">Review changes before saving</span><span class="m-btn">Save changes</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div></div>
+    <figcaption><b>Figure 2 — Groups one to four.</b> Cost signals, Allocation impact, Cost impact and Rightsizing in collapsed form: per-event channel glyphs, timing column, group status and a section Save action.</figcaption>
+  </figure>
+
+  <figure class="mock" role="img" aria-label="Collapsed sections for Budgets and forecasts, Action items, People and access with its three events, and the Data platforms group showing a 'Coming soon' placeholder card.">
+    <div class="mock-vp"><div class="mock-page">
+
+      <div class="m-sec">
+        <div class="m-status"><span class="m-dot"></span>All on<span class="m-chev">⌄</span></div>
+        <div class="m-grid">
+          <div>
+            <div class="m-sec-title"><span class="m-ico">◖</span>Budgets &amp; forecasts</div>
+            <div class="m-mini">Budgets you own or follow, across every tenant you can access.</div>
+          </div>
+          <div>
+            <div class="m-list">
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">Budget threshold crossed</div><div class="m-mini">Actual spend passes a threshold on a budget you own or follow.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch on">#</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+            </div>
+            <div class="m-save"><span class="m-faint">Review changes before saving</span><span class="m-btn">Save changes</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-sec">
+        <div class="m-status"><span class="m-dot"></span>All on<span class="m-chev">⌄</span></div>
+        <div class="m-grid">
+          <div>
+            <div class="m-sec-title"><span class="m-ico">✓</span>Action items</div>
+            <div class="m-mini">Choose whether Quper notifies you about new action items.</div>
+          </div>
+          <div>
+            <div class="m-list">
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">Action item notifications</div><div class="m-mini">Receive a notification when a new action item needs your attention.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch">–</span><span class="m-ch">–</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+            </div>
+            <div class="m-save"><span class="m-faint">Review changes before saving</span><span class="m-btn">Save changes</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-sec">
+        <div class="m-status"><span class="m-dot"></span>All on<span class="m-chev">⌄</span></div>
+        <div class="m-grid">
+          <div>
+            <div class="m-sec-title"><span class="m-ico">⚘</span>People &amp; access</div>
+            <div class="m-mini">Workspace membership, role and group changes that another team may need to know about.</div>
+          </div>
+          <div>
+            <div class="m-list">
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">New user added</div><div class="m-mini">A new user is added to the workspace.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch">–</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">User role changed</div><div class="m-mini">A user's workspace role or access level is changed.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch">–</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">User added to a group</div><div class="m-mini">A user is added to a new workspace group.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch">–</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+            </div>
+            <div class="m-save"><span class="m-faint">Review changes before saving</span><span class="m-btn">Save changes</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-sec">
+        <div class="m-grid">
+          <div>
+            <div class="m-sec-title"><span class="m-ico">◇</span>Data platforms</div>
+            <div class="m-mini">Warehouse, job and query health across your connected data platforms.</div>
+          </div>
+          <div>
+            <div class="m-list">
+              <div class="m-soon">
+                <span class="m-tile" style="background:#f1f5f9;border-color:#e2e8f0;color:#94a3b8">◇</span>
+                <div class="m-grow">
+                  <div class="m-strong">Coming soon</div>
+                  <div class="m-mini">Data platform notification preferences will be available here once your warehouse and job health data are connected.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div></div>
+    <figcaption><b>Figure 3 — Groups five to eight.</b> Budgets &amp; forecasts, Action items, the three People &amp; access events, and the Data platforms placeholder, which has no events and no Save action.</figcaption>
+  </figure>
+</section>
+
+<section id="s5">
+  <h2><span class="num">5</span>Core event-state rules</h2>
+  <p>Each event preference consists of at least:</p>
+  <ul>
+    <li><code>channels</code>: zero or more delivery-channel IDs;</li>
+    <li><code>timing</code>: <code>instant</code>, <code>daily</code>, <code>weekly</code>, or <code>off</code>;</li>
+    <li>optional event-specific values such as <code>threshold</code>, <code>confidence</code>, or <code>size</code>.</li>
+  </ul>
+
+  <div class="note rule">
+    <span class="label">Active-state rule</span>
+    <p>An event is <strong>active</strong> only when <em>both</em> are true: <code>timing</code> is not <code>off</code>, <strong>and</strong> at least one channel is selected.</p>
+    <p>An event is <strong>off</strong> when <em>either</em> is true: <code>timing</code> is <code>off</code>, <strong>or</strong> no channel is selected.</p>
+    <p>The summary count and each group's active count must use this same active-state rule.</p>
+  </div>
+
+  <h3>5.1 Channel selection transitions</h3>
+  <ul>
+    <li>Removing the final selected channel must set the event timing to <code>off</code>.</li>
+    <li>Adding a channel to an event whose timing is <code>off</code> must restore timing to <code>instant</code>.</li>
+    <li>Turning an event back on must reuse its previously selected channels when at least one remains stored.</li>
+    <li>If an event has no stored channel when it is turned on, it must fall back to In-app.</li>
+  </ul>
+
+  <h3>5.2 Timing options</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Value</th><th>Label</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>instant</code></td><td>Instant</td><td>Deliver as soon as the event qualifies, subject to channel, quiet-hour, and pause rules.</td></tr>
+        <tr><td><code>daily</code></td><td>Daily digest</td><td>Combine qualifying events into a daily digest.</td></tr>
+        <tr><td><code>weekly</code></td><td>Weekly digest</td><td>Combine qualifying events into a weekly digest.</td></tr>
+        <tr><td><code>off</code></td><td>Off</td><td>Do not deliver the event.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <ul>
+    <li>Selecting Instant, Daily digest, or Weekly digest for an event with no selected channels must add In-app automatically.</li>
+    <li>Every configurable event must expose its per-event channel selector when expanded.</li>
+    <li>Events with specialized on/off or threshold behavior do not expose digest timing unless explicitly supported by that event type.</li>
+  </ul>
+</section>
+
+<section id="s6">
+  <h2><span class="num">6</span>Delivery-channel rules</h2>
+
+  <h3>6.1 In-app</h3>
+  <ul>
+    <li>In-app delivery represents the Quper notification center and in-product toasts.</li>
+    <li>In-app is <strong>always globally enabled</strong> and cannot be turned off.</li>
+    <li>In-app notifications must continue to collect during quiet hours and a temporary pause.</li>
+  </ul>
+
+  <h3>6.2 Email</h3>
+  <ul>
+    <li>Email delivery is enabled by default.</li>
+    <li>Email may be globally enabled or disabled per actor.</li>
+    <li>The displayed destination must be the selected actor's email address.</li>
+    <li>Disabling Email globally must silence Email for every event <em>without deleting</em> each event's Email selection.</li>
+  </ul>
+
+  <h3>6.3 </h3>
+  <ul>
+    <li> delivery is enabled by default.</li>
+    <li> may be globally enabled or disabled per actor.</li>
+    <li>The current workspace destination is shown as direct messages from the Quper app in <code>xequalto..com</code>.</li>
+    <li>Disabling  globally must silence  for every event <em>without deleting</em> each event's  selection.</li>
+  </ul>
+
+  <h3>6.4 Microsoft </h3>
+  <ul>
+    <li>Microsoft  is displayed as not connected.</li>
+    <li> event-level selection is disabled until a connection exists.</li>
+    <li>The page exposes a Connect action, but the prototype does not implement the connection flow.</li>
+    <li>When implemented,  must follow the same global-channel, quiet-hour, pause, and event-selection rules as other external channels.</li>
+  </ul>
+
+  <h3>6.5 Global versus event-level channel state</h3>
+  <ul>
+    <li>Every configurable event must display In-app, Email, , and  channel choices in its expanded details.</li>
+    <li> remains disabled at event level until the workspace connection is available.</li>
+    <li>An event may retain Email or  in its selected channel list while the corresponding global channel is disabled.</li>
+    <li>In that state, the event remains configured for that channel but no delivery may occur through it.</li>
+    <li>The UI should warn the user when a selected event channel is globally disabled.</li>
+  </ul>
+  <div class="note open">
+    <span class="label">Decision required</span>
+    <p>Global channel state does not change the active-event count in the current prototype. Whether an event with only globally disabled external channels should count as active <strong>requires product confirmation</strong>.</p>
+  </div>
+</section>
+
+<section id="s7">
+  <h2><span class="num">7</span>Group-level bulk actions</h2>
+  <p>Every configurable group displays one of the following statuses:</p>
+  <ul>
+    <li><code>All on</code> — all events in the group are active;</li>
+    <li><code>All off</code> — no events in the group are active;</li>
+    <li><code>&lt;active&gt; of &lt;total&gt; on</code> — only some events are active.</li>
+  </ul>
+
+  <h3>7.1 Admin bulk actions</h3>
+  <ul>
+    <li><strong>Mute all</strong> — set every event in the group to <code>off</code>; stored channel selections remain unchanged.</li>
+    <li><strong>Send all as daily digest</strong> — set every event in the group to <code>daily</code>; preserve existing channels, or use In-app if an event has none.</li>
+    <li><strong>Reset to defaults</strong> — replace every event in the group with its complete default preference object.</li>
+  </ul>
+  <div class="note open">
+    <span class="label">Conflict — resolve before production</span>
+    <p>The menu copy says urgent events remain instant during “Send all as daily digest,” but the current implementation sets <em>every</em> event to <code>daily</code> and has no urgent-event classification.</p>
+  </div>
+
+  <h3>7.2 Normal-user bulk action</h3>
+  <ul>
+    <li>When at least one event in a group is active, the normal user sees <strong>Mute section</strong>, which sets all event timings to <code>off</code>.</li>
+    <li>When no events are active, the normal user sees <strong>Unmute section</strong>, which:
+      <ul>
+        <li>restores stored channels when present;</li>
+        <li>otherwise restores the event's default channels;</li>
+        <li>sets timing to <code>instant</code> for every event in the group.</li>
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<section id="s8">
+  <h2><span class="num">8</span>Event-specific business rules</h2>
+
+  <h3>8.1 Common numeric-threshold controls</h3>
+  <p>Cost signal, budget, allocation-impact, and cost-impact rules use the same three-part threshold editor:</p>
+  <ul>
+    <li><strong>Threshold</strong> — a numeric input box constrained by the event-specific minimum, maximum, and increment.</li>
+    <li><strong>Condition</strong> — a dropdown containing <code>Equals</code> and <code>Above</code>, positioned after Threshold. Operator symbols are not displayed in the UI.</li>
+    <li><strong>Schedule</strong> — a dropdown containing <code>Once when reached</code> and <code>Daily</code>.</li>
+  </ul>
+  <div class="note rule">
+    <span class="label">Layout rule</span>
+    <p>The controls must appear in the order <strong>Threshold → Condition → Schedule</strong> on desktop and mobile. The default condition is <code>Equals</code> and the default schedule is <code>Once when reached</code>.</p>
+  </div>
+  <ul>
+    <li><code>Equals</code> qualifies when the observed value equals the configured threshold.</li>
+    <li><code>Above</code> qualifies when the observed value is strictly greater than the configured threshold.</li>
+    <li><code>Once when reached</code> sends once when the rule changes from not qualifying to qualifying. It may send again only after the rule stops qualifying and subsequently qualifies again.</li>
+    <li><code>Daily</code> sends at most once per calendar day while the rule continues to qualify.</li>
+    <li>The daily evaluation timezone follows the notification schedule timezone.</li>
+    <li>Every additional admin-created threshold rule has its own threshold value, condition, schedule, and recipients.</li>
+  </ul>
+
+  <figure class="mock" role="img" aria-label="The Signal detected event expanded, showing a Channels row with In-app, Email and  checked and  disabled; a Threshold row with a 75 dollars per day input, an Equals condition dropdown and an 'Once when reached' schedule dropdown; a Recipients row with Maya Shah and Rohan Mehta chips plus a user picker and Add recipient button; and a More conditions block containing 'Additional condition 1' at 150 dollars per day with its own recipients You and Neha Kapoor, a Remove link and an 'Add more condition' action.">
+    <div class="mock-vp"><div class="mock-page">
+
+      <div class="m-sec">
+        <div class="m-status"><span class="m-dot"></span>All on<span class="m-chev">⌄</span></div>
+        <div class="m-grid">
+          <div>
+            <div class="m-sec-title"><span class="m-ico">↝</span>Cost signals</div>
+            <div class="m-mini">Anomalies, drift and savings opportunities across AWS, Azure and GCP.</div>
+          </div>
+          <div>
+            <div class="m-colhead m-cols"><span>Event</span><i>In-app</i><i>Email</i><i></i><i></i><span class="t">Timing</span><span></span></div>
+            <div class="m-list">
+
+              <div class="m-ehead">
+                <div class="m-grow"><div class="m-strong">Signal detected</div><div class="m-mini">Spend on a service or account moves outside its expected range.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch on">#</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌃</span>
+              </div>
+
+              <div class="m-drow">
+                <div class="m-dlabel">Channels</div>
+                <div>
+                  <span class="m-chip on">Q In-app ✓</span><span class="m-chip on">✉ Email ✓</span><span class="m-chip on">#  ✓</span><span class="m-chip">T </span>
+                </div>
+              </div>
+
+              <div class="m-drow">
+                <div class="m-dlabel">Threshold</div>
+                <div>
+                  <div class="m-mini" style="margin-bottom:9px">Enter the daily impact amount, then choose the condition and schedule.</div>
+                  <div class="m-box">
+                    <div class="m-fields">
+                      <div><div class="m-flabel">Threshold</div><div class="m-input">$ <b>75</b><span class="u">/day</span></div></div>
+                      <div><div class="m-flabel">Condition</div><div class="m-select">Equals</div></div>
+                      <div><div class="m-flabel">Schedule</div><div class="m-select">Once when reached</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="m-drow">
+                <div class="m-dlabel">Recipients</div>
+                <div>
+                  <div style="margin-bottom:6px"><span class="m-pill">Maya Shah <x>✕</x></span><span class="m-pill">Rohan Mehta <x>✕</x></span></div>
+                  <div class="m-picker">
+                    <div class="m-select" style="color:#94a3b8">Select a user or team…</div>
+                    <span class="m-btn-dim">Add recipient</span>
+                  </div>
+                  <div class="m-faint" style="margin-top:6px">Choose who receives this notification.</div>
+                </div>
+              </div>
+
+              <div class="m-drow">
+                <div class="m-dlabel">More conditions</div>
+                <div>
+                  <div class="m-box">
+                    <div class="m-cond-head">
+                      <span class="m-strong">Additional condition 1</span>
+                      <span class="m-link">Remove</span>
+                    </div>
+                    <div class="m-fields">
+                      <div><div class="m-flabel">Threshold</div><div class="m-input">$ <b>150</b><span class="u">/day</span></div></div>
+                      <div><div class="m-flabel">Condition</div><div class="m-select">Equals</div></div>
+                      <div><div class="m-flabel">Schedule</div><div class="m-select">Once when reached</div></div>
+                    </div>
+                    <div style="margin:12px 0 6px"><span class="m-pill">You <x>✕</x></span><span class="m-pill">Neha Kapoor <x>✕</x></span></div>
+                    <div class="m-picker">
+                      <div class="m-dlabel" style="flex:0 0 76px;padding-top:0">Recipients</div>
+                      <div class="m-select" style="color:#94a3b8">Select a user or team…</div>
+                      <span class="m-btn-dim">Add recipient</span>
+                    </div>
+                    <div class="m-faint" style="margin-top:6px">Choose who receives this notification.</div>
+                  </div>
+                  <span class="m-addmore" style="padding-left:0">+ Add more condition</span>
+                </div>
+              </div>
+
+              <div class="m-erow m-cols">
+                <div class="m-grow"><div class="m-strong">Action created</div><div class="m-mini">An action item is created from a cost signal for your team to review.</div></div>
+                <span class="m-ch on">Q</span><span class="m-ch on">✉</span><span class="m-ch">–</span><span class="m-ch">–</span>
+                <span class="m-timing">Instant</span><span class="m-chev">⌄</span>
+              </div>
+
+            </div>
+            <div class="m-save"><span class="m-faint">Review changes before saving</span><span class="m-btn">Save changes</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div></div>
+    <figcaption><b>Figure 4 — Expanded event (admin).</b> Per-event channel selector, the Threshold → Condition → Schedule editor, the shared recipient picker, and an additional condition carrying its own independent threshold and recipient list.</figcaption>
+  </figure>
+
+  <h3>8.2 Cost signal — <code>cost-signal</code></h3>
+  <dl class="kv">
+    <dt>Default</dt><dd><code>$100/day</code> impact threshold</dd>
+    <dt>Range</dt><dd><code>$0/day</code> – <code>$1,000/day</code></dd>
+    <dt>Increment</dt><dd><code>$25</code></dd>
+  </dl>
+  <ul>
+    <li>A notification qualifies when estimated daily impact satisfies the selected condition against the configured threshold.</li>
+    <li>Admins may add multiple additional conditions.</li>
+    <li>Each additional condition starts at <code>$250/day</code> and has the same <code>$0–$1,000</code>, <code>$25</code>-increment range.</li>
+    <li>Each additional condition includes a recipient selector, and admins may remove it.</li>
+    <li>Normal users cannot add or remove additional conditions and do not see recipient management.</li>
+  </ul>
+
+  <h3>8.3 Cost-signal action created — <code>action-created</code></h3>
+  <ul>
+    <li>The event can be enabled or disabled with an action-creation toggle.</li>
+    <li>Disabling it sets timing to <code>off</code> but preserves stored channels.</li>
+    <li>Enabling it sets timing to <code>instant</code> and restores stored channels; if none exist, it selects In-app.</li>
+    <li>Admins see recipient management; normal users do not.</li>
+  </ul>
+
+  <h3>8.4 Allocation impact — <code>allocation-impact-detected</code></h3>
+  <dl class="kv">
+    <dt>Default</dt><dd><code>100%</code> confidence threshold</dd>
+    <dt>Range</dt><dd><code>0%</code> – <code>100%</code></dd>
+    <dt>Increment</dt><dd><code>5%</code></dd>
+  </dl>
+  <ul>
+    <li>A notification qualifies when Quper's confidence satisfies the selected condition against the configured value.</li>
+    <li>Admins may add multiple additional confidence thresholds.</li>
+    <li>Each additional threshold starts at <code>90%</code>, uses the same range and increment, and includes a recipient selector.</li>
+    <li>Admins may remove an additional threshold.</li>
+    <li>Normal users cannot manage additional thresholds or recipients.</li>
+  </ul>
+
+  <h3>8.5 Cost impact — <code>cost-impact-detected</code></h3>
+  <p>Cost impact uses the same confidence rules as Allocation impact: default <code>100%</code> confidence; range <code>0–100%</code>; <code>5%</code> increments; admin-only additional thresholds starting at <code>90%</code> with recipient selection.</p>
+
+  <h3>8.6 Rightsizing recommendation — <code>rightsizing-recommendation</code></h3>
+  <ul>
+    <li>The user selects a recommendation threshold of <code>Low</code>, <code>Medium</code>, or <code>High</code>. Default: <code>Medium</code>.</li>
+    <li>Admins see recipient management; normal users do not.</li>
+  </ul>
+  <div class="note open">
+    <span class="label">Definition missing</span>
+    <p>The precise business meaning of Low, Medium, and High is not defined in the prototype and must be supplied by the rightsizing domain.</p>
+  </div>
+
+  <h3>8.7 Rightsizing action created — <code>rightsizing-action-created</code></h3>
+  <ul>
+    <li>Uses the same enable/disable behavior as the cost-signal Action created event.</li>
+    <li>Disabling sets timing to <code>off</code> and preserves channels.</li>
+    <li>Enabling sets timing to <code>instant</code> and restores stored channels, falling back to In-app.</li>
+    <li>Admins see recipient management; normal users do not.</li>
+  </ul>
+
+  <h3>8.8 Budget threshold crossed — <code>budget-threshold</code></h3>
+  <dl class="kv">
+    <dt>Default</dt><dd><code>80%</code> of the budget's period limit</dd>
+    <dt>Range</dt><dd><code>0%</code> – <code>100%</code></dd>
+    <dt>Increment</dt><dd><code>5%</code></dd>
+  </dl>
+  <ul>
+    <li>A notification qualifies when actual spend satisfies the selected condition against the configured share of a budget the user owns or follows.</li>
+    <li>Admins may add multiple additional thresholds, each starting at <code>90%</code> with the same range and increment and its own recipient selector.</li>
+    <li>Admins may remove an additional threshold.</li>
+    <li>Normal users cannot manage additional thresholds or recipients.</li>
+  </ul>
+
+  <h3>8.9 Action item — <code>action-item</code></h3>
+  <ul>
+    <li>The event has a simple on/off control.</li>
+    <li>Turning it on always sets the channel to In-app and timing to <code>instant</code>.</li>
+    <li>Turning it off sets timing to <code>off</code>.</li>
+    <li>The event supports per-event channel selection.</li>
+    <li>The event does <strong>not</strong> support recipients or digest timing.</li>
+  </ul>
+
+  <h3>8.10 People and access notifications</h3>
+  <p>The People &amp; access section contains three system events:</p>
+  <ul>
+    <li><code>people-user-added</code> — fires when a new user is added to the workspace;</li>
+    <li><code>people-role-changed</code> — fires when a user's workspace role or access level changes;</li>
+    <li><code>people-group-added</code> — fires when a user is added to a new workspace group.</li>
+  </ul>
+  <p>Each event follows these rules:</p>
+  <ul>
+    <li>it uses a simple on/off control;</li>
+    <li>it is always Instant when enabled and <code>off</code> when disabled;</li>
+    <li>enabling restores stored channels, falling back to In-app and Email when no channels are stored;</li>
+    <li>all event-level channel choices are displayed;</li>
+    <li>it supports one or more third-party recipients, such as HR — HR is the default example recipient;</li>
+    <li>admins can select people or  from the workspace recipient directory and remove existing recipients;</li>
+    <li>the prototype recipient picker contains HR plus sample users from People Operations, Engineering, Finance, Security, and IT;</li>
+    <li>duplicate recipient names are ignored case-insensitively;</li>
+    <li>normal users can view recipients but recipient management is controlled by the workspace admin.</li>
+  </ul>
+</section>
+
+<section id="s9">
+  <h2><span class="num">9</span>Recipient rules</h2>
+  <ul>
+    <li>Every event that supports recipients must display the shared recipient picker.</li>
+    <li>The selected actor is represented as “You” wherever they are assigned as a recipient — for the admin, “You” resolves to the admin profile; for a normal user, to the normal-user profile.</li>
+    <li>The shared picker is available for cost signals, action-created events, allocation and cost impact, rightsizing recommendations, budget thresholds, People &amp; access events, generic supported events, and additional threshold or condition rules.</li>
+    <li>Admins can add and remove recipients from the sample workspace directory.</li>
+    <li>Normal users can view recipients but cannot change workspace-managed recipient lists.</li>
+    <li>Additional-condition recipient rules must be stored independently from the event's primary recipient rule.</li>
+    <li>People &amp; access events may notify a third party in addition to the actor affected by the event.</li>
+    <li>Third-party recipients may represent a person, team, or email address; HR is the default example.</li>
+  </ul>
+  <div class="note gap">
+    <span class="label">Prototype limitation</span>
+    <p>The prototype supports in-memory selection and removal but does not implement server search, persistence, or authorization. These are required for a production recipient workflow.</p>
+  </div>
+
+  <h3>9.1 Prototype recipient directory</h3>
+  <p>The prototype must make the following sample recipients available in every supported recipient picker:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Recipient</th><th>Role or team</th><th>Email</th></tr></thead>
+      <tbody>
+        <tr><td>You</td><td>Currently selected Admin or Normal user</td><td>Selected actor's email</td></tr>
+        <tr><td>HR</td><td>People Operations team</td><td>Not applicable</td></tr>
+        <tr><td>Maya Shah</td><td>HR Business Partner</td><td><code>maya@xequalto.com</code></td></tr>
+        <tr><td>Rohan Mehta</td><td>Engineering Manager</td><td><code>rohan@xequalto.com</code></td></tr>
+        <tr><td>Ananya Rao</td><td>Finance Controller</td><td><code>ananya@xequalto.com</code></td></tr>
+        <tr><td>Vikram Singh</td><td>Security Admin</td><td><code>vikram@xequalto.com</code></td></tr>
+        <tr><td>Neha Kapoor</td><td>IT Operations</td><td><code>neha@xequalto.com</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Recipient-picker behavior</h4>
+  <ul>
+    <li>an admin selects one directory entry and then uses <strong>Add recipient</strong>;</li>
+    <li>already-added entries are disabled in the dropdown and marked as added;</li>
+    <li>the Add recipient action remains disabled until a directory entry is selected;</li>
+    <li>selected recipients appear as removable chips;</li>
+    <li>duplicate recipients must not be added;</li>
+    <li>removing a chip makes that recipient available in the dropdown again;</li>
+    <li>recipient selections are independent for each notification event;</li>
+    <li>every additional threshold or condition rule maintains its own recipient list;</li>
+    <li>normal users can view the assigned chips but cannot add or remove workspace-managed recipients.</li>
+  </ul>
+</section>
+
+<section id="s10">
+  <h2><span class="num">10</span>Schedule rules</h2>
+
+  <h3>10.1 Quiet hours</h3>
+  <dl class="kv">
+    <dt>Default state</dt><dd>Enabled</dd>
+    <dt>Default window</dt><dd><code>21:00</code> → <code>08:00</code>, every day</dd>
+    <dt>Timezone</dt><dd>India Standard Time</dd>
+  </dl>
+  <ul>
+    <li>Quiet hours affect Email, , and  only.</li>
+    <li>During quiet hours, qualifying external notifications are held and delivered together when the window ends.</li>
+    <li>In-app notifications continue to collect during the window.</li>
+    <li>When quiet hours are disabled, the time controls are disabled visually and functionally, but their values remain stored.</li>
+    <li>Overnight windows, where the start time is later than the end time, must be supported.</li>
+  </ul>
+
+  <h3>10.2 Temporary pause</h3>
+  <p>The user may pause external delivery for <strong>1 hour</strong>, <strong>4 hours</strong>, or <strong>until tomorrow morning</strong>. While paused:</p>
+  <ul>
+    <li>Email, , and  delivery is stopped;</li>
+    <li>In-app notifications continue to collect;</li>
+    <li>the summary shows the pause status;</li>
+    <li>a <strong>Resume now</strong> action is available;</li>
+    <li>delivery is expected to resume automatically at the selected time.</li>
+  </ul>
+  <div class="note gap">
+    <span class="label">Prototype limitation</span>
+    <p>The prototype stores only display text such as “in 1 hour” and does not calculate or persist an actual resume timestamp. Production must store a timestamp and define “tomorrow morning,” including timezone and daylight-saving behavior where applicable.</p>
+  </div>
+
+  <h3>10.3 Delivery precedence</h3>
+  <p>For a qualifying event, effective delivery must be determined in this order:</p>
+  <ol>
+    <li>The event must be active.</li>
+    <li>The event must include the candidate channel.</li>
+    <li>The candidate channel must be globally available and enabled.</li>
+    <li>In-app may deliver/collect ly.</li>
+    <li>External delivery must be held if a temporary pause is active.</li>
+    <li>Otherwise, external delivery must be held if the current time is inside quiet hours.</li>
+    <li>The event's Instant, Daily, or Weekly cadence must then be applied according to the agreed queueing policy.</li>
+  </ol>
+  <div class="note open">
+    <span class="label">Specification required</span>
+    <p>The interaction between digest cadence and quiet-hour release is not defined in the prototype and requires backend/product specification.</p>
+  </div>
+</section>
+
+<section id="s11">
+  <h2><span class="num">11</span>Summary and status behavior</h2>
+  <ul>
+    <li>The page must show <code>&lt;active count&gt; of &lt;total configurable events&gt;</code> for the selected actor. The current total is <strong>eleven</strong>.</li>
+    <li>For Admin mode, the summary label is “Workspace defaults include.”</li>
+    <li>For Normal user mode, the summary label is “You're getting,” followed by a reminder that changes apply only to that user.</li>
+    <li>When paused, the summary must include the pause-until value.</li>
+    <li>The active count currently ignores global channel availability, quiet hours, and pause state; it counts configured active events only.</li>
+  </ul>
+</section>
+
+<section id="s12">
+  <h2><span class="num">12</span>Save behavior</h2>
+  <ul>
+    <li>Delivery channels, each configurable notification group, and Schedule have independent Save actions.</li>
+    <li>A successful save must show section-level confirmation and a global success message.</li>
+    <li>The prototype displays confirmation for approximately 1.3 seconds.</li>
+    <li>Production save must persist only the intended actor's changed settings and return an error state if persistence fails.</li>
+    <li>Unsaved changes should be tracked per section.</li>
+    <li>Navigation away with unsaved changes should require a defined discard/continue flow.</li>
+  </ul>
+  <div class="note gap">
+    <span class="label">12.1 Current prototype limitation</span>
+    <p>All controls update in-memory state ly. The Save button only displays confirmation and does not persist or commit data. There is no dirty-state comparison, loading state, error handling, retry, concurrency control, or backend integration.</p>
+  </div>
+</section>
+
+<section id="s13">
+  <h2><span class="num">13</span>Reset behavior</h2>
+  <p><strong>Reset to defaults</strong> applies to the currently selected actor only and must restore:</p>
+  <ul>
+    <li>all eleven event preference objects to their catalogue defaults;</li>
+    <li>Email to enabled;</li>
+    <li> to enabled;</li>
+    <li>quiet hours to enabled;</li>
+    <li>quiet-hours start to <code>21:00</code>;</li>
+    <li>quiet-hours end to <code>08:00</code>;</li>
+    <li>temporary pause to inactive.</li>
+  </ul>
+  <p>The reset must not change the other actor's preferences.</p>
+  <div class="note open">
+    <span class="label">Decisions required before production</span>
+    <p>Product must decide whether Reset:</p>
+    <ul>
+      <li>applies ly or requires confirmation;</li>
+      <li>is saved ly or remains an unsaved change;</li>
+      <li>also clears additional rules and recipient assignments;</li>
+      <li>should restore future  state after  becomes connected.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="s14">
+  <h2><span class="num">14</span>Locked/mandatory notification support</h2>
+  <p>The code contains support for a future <code>locked</code> group even though no current group is locked. If a group is locked:</p>
+  <ul>
+    <li>In-app and Email are mandatory channels;</li>
+    <li>those channels cannot be deselected;</li>
+    <li>default timing is Instant;</li>
+    <li>group bulk controls are hidden;</li>
+    <li>mandatory channels are shown with a locked indicator.</li>
+  </ul>
+  <div class="note open">
+    <span class="label">Decision required</span>
+    <p>Product must confirm which events, if any, are mandatory before this behavior is enabled.</p>
+  </div>
+</section>
+
+<section id="s15">
+  <h2><span class="num">15</span>Validation and error requirements</h2>
+  <p>Production implementation should enforce:</p>
+  <ul>
+    <li>only known event IDs, channel IDs, and timing values may be saved;</li>
+    <li>monetary thresholds must be numeric, within <code>$0–$1,000</code>, and divisible by <code>$25</code>;</li>
+    <li>percentage thresholds must be numeric, within <code>0–100</code>, and divisible by <code>5</code>;</li>
+    <li>a threshold condition must be <code>=</code> or <code>&gt;</code>;</li>
+    <li>a threshold schedule must be <code>once</code> or <code>daily</code>;</li>
+    <li>rightsizing size must be <code>Low</code>, <code>Medium</code>, or <code>High</code>;</li>
+    <li>quiet-hour values must be valid local times;</li>
+    <li>pause-until must be a future timestamp;</li>
+    <li>recipient IDs must exist and be authorized for the workspace;</li>
+    <li>disconnected channels cannot be selected for effective delivery;</li>
+    <li>server validation failures must be shown without discarding the user's unsaved edits.</li>
+  </ul>
+</section>
+
+<section id="s16">
+  <h2><span class="num">16</span>Persistence model requirements</h2>
+  <p>At minimum, a persisted preference record should identify:</p>
+  <ul>
+    <li>workspace;</li>
+    <li>preference owner or scope (<code>workspace-default</code> or <code>user</code>);</li>
+    <li>event ID;</li>
+    <li>selected channels;</li>
+    <li>timing;</li>
+    <li>event-specific threshold, confidence, or size;</li>
+    <li>threshold condition and threshold schedule for every numeric threshold rule;</li>
+    <li>recipients and additional rules where allowed;</li>
+    <li>global channel enablement;</li>
+    <li>quiet-hours enabled state, start, end, timezone, and applicable days;</li>
+    <li>pause-until timestamp;</li>
+    <li>version or update timestamp for concurrency control.</li>
+  </ul>
+  <div class="note open">
+    <span class="label">Inheritance undefined</span>
+    <p>The backend must apply workspace defaults and personal overrides according to a documented inheritance rule. The prototype keeps two complete independent copies and does not implement inheritance.</p>
+  </div>
+</section>
+
+<section id="s17">
+  <h2><span class="num">17</span>Accessibility and responsive requirements</h2>
+  <ul>
+    <li>Every interactive control must be keyboard operable.</li>
+    <li>Toggles must expose an accessible name, role, and current checked state.</li>
+    <li>Expandable event rows and bulk menus must expose expanded/collapsed state.</li>
+    <li>Disabled channel controls must expose why they are unavailable.</li>
+    <li>Save success and error messages must be announced to assistive technology.</li>
+    <li>Inputs must have unique labels. Additional rules must include their sequence or identifying condition in the accessible name.</li>
+    <li>Color must not be the only indicator of enabled, disabled, warning, or saved state.</li>
+    <li>The page must remain usable below <code>780px</code>; the prototype switches to a single-column layout and hides the timing column on small screens.</li>
+  </ul>
+</section>
+
+<section id="s18">
+  <h2><span class="num">18</span>Production gaps and decisions required</h2>
+  <p>The following behavior is visible or implied but not complete:</p>
+  <ol>
+    <li>Save actions do not persist data.</li>
+    <li>Connect  has no action.</li>
+    <li>The recipient directory is sample in-memory data and has no backend search or persistence.</li>
+    <li>Pause options do not create real timestamps or auto-resume.</li>
+    <li>Additional conditions exist only in local component memory and are lost when their component unmounts.</li>
+    <li>Workspace-default inheritance and member override behavior are undefined.</li>
+    <li>All events expose per-event channels, but specialized event types still do not expose generic digest timing.</li>
+    <li>“Urgent events stay instant” conflicts with the bulk implementation, which changes every event to Daily.</li>
+    <li>The definition of Low, Medium, and High rightsizing thresholds is missing.</li>
+    <li>The interaction among digest cadence, quiet hours, and temporary pause is undefined.</li>
+    <li>The active-event count ignores whether the event's selected external channels are globally disabled.</li>
+    <li>Data-platform readiness and its future notification catalogue are undefined.</li>
+    <li>There is no API, authentication, authorization, audit log, loading state, failure handling, or conflict handling.</li>
+    <li>There is no confirmation before global reset.</li>
+  </ol>
+  <p>These decisions should be resolved before the prototype is treated as a production specification.</p>
+</section>
+
+<section id="s19">
+  <h2><span class="num">19</span>Acceptance criteria summary</h2>
+  <p>The feature is functionally complete when:</p>
+  <ul class="checklist">
+    <li>all eleven event types load with the documented defaults;</li>
+    <li>Admin and Normal-user settings remain isolated;</li>
+    <li>active counts consistently follow the active-event rule;</li>
+    <li>global channel settings correctly gate all event deliveries;</li>
+    <li>event-level state transitions preserve or restore channels as documented;</li>
+    <li>all event-specific thresholds, ranges, increments, and defaults are enforced;</li>
+    <li>role-based recipient and additional-rule permissions are enforced server-side and in the UI;</li>
+    <li>bulk mute, unmute, daily, and reset actions follow their documented rules;</li>
+    <li>quiet hours and pause suppress only external delivery and release queued messages correctly;</li>
+    <li>save and reset operations persist reliably with success and error feedback;</li>
+    <li> and recipient actions either work end-to-end or are clearly disabled;</li>
+    <li>settings survive reload and concurrent updates safely;</li>
+    <li>the experience meets the accessibility and responsive requirements above.</li>
+  </ul>
+</section>
+
+</main>
+</div>
+
+<footer class="doc-foot">
+  <hr>
+  <p>Notification Settings — Product Requirements · Source: <code>notification-settings-vite</code> prototype · Screenshots reflect the prototype as of this document.</p>
+</footer>
+
+</body>
+</html>
